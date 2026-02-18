@@ -2,7 +2,7 @@
   hosts: webservers
   remote_user: runner
   become: true
-  become_method: sudo
+  become_method: ansible.builtin.sudo
 
   tasks:
     - name: Install nginx
@@ -41,6 +41,7 @@
       ansible.builtin.command: "nmap {{ item }} -p 80 -oG -"
       loop: "{{ lookup('file', './target.txt').splitlines() }}"
       register: scan_results
+      changed_when: false
 
     - name: Scan results
       ansible.builtin.debug:
