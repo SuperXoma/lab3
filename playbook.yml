@@ -1,0 +1,50 @@
+
+- name: Deploy nginx
+  hosts: webservers
+  remote_user: runner
+  become: yes
+  become_method: sudo
+
+  tasks:
+  - name: Install nginx
+    ansible.builtin.apt:
+      name: nginx
+      state: latest
+      update_cache: yes
+
+  - name: Copy index
+    ansible.builtin.copy:
+      src: ./index.html
+      dest: /var/www/html/index.nginx-debian.html
+      owner: root
+      group: root
+      mode: '0666' 
+
+- name: Scan targets with loop and report
+  hosts: webservers
+  remote_user: runner
+  become: true
+
+  tasks:
+  - name: Install NMAP
+    ansible.builtin.apt:
+      name: nmap
+      state: present
+
+  - name: Copy nmap targets list
+    copy:
+        src: ./target.txt
+        dest: ~/target.txt
+        force: yes
+        mode: 0644
+
+  - name: Scan
+    ansible.builtin.command: "nmap {{ item }} -p 80 -oG -"
+    loop: "{{ lookup('file', './target.txt').splitlines() }}"
+    register: scan_results
+
+  - name: Scan results
+    ansible.builtin.debug:
+      msg: "{{ item.stdout_lines }}"
+    loop: "{{ scan_results.results }}"
+
