@@ -1,6 +1,6 @@
 - name: Install nginx
   ansible.builtin.apt:
-    update_cache: True
+    update_cache: true
     name: nginx
     state: present
 
@@ -17,6 +17,9 @@
   ansible.builtin.file:
     path: '/var/www/{{ item }}/'
     state: directory
+    owner: root 
+    group: root 
+    mode: '0755'
   loop: '{{ sites }}'
 
 - name: Copy index from template
