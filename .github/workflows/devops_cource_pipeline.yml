@@ -11,5 +11,3 @@ jobs:
         run: pwd
       - name: Who am I?
         run: whoami
-
-
