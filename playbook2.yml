@@ -1,10 +1,8 @@
----
-
 - name: Install nginx with Virtual Hosts
   hosts: webservers
   remote_user: runner
   become: true
-  become_method: sudo
+  become_method: ansible.builtin.sudo
   gather_facts: false
 
   vars:
